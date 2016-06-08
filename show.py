@@ -81,3 +81,30 @@ for name in all_mod_names:
         print('{0}: {1} vs {2}'.format(name,
                                        urllib3_modules[name],
                                        requests_urllib3_modules[name]))
+
+try:
+    from ssl import SSLContext
+    del SSLContext
+    HAS_MODERN_SSL = True
+except ImportError:
+    HAS_MODERN_SSL = False
+
+try:
+    requests.pyopenssl
+    REQUESTS_HAS_PYOPENSSL = True
+except AttributeError:
+    REQUESTS_HAS_PYOPENSSL = False
+
+print()
+print('HAS_MODERN_SSL: {0}'.format(HAS_MODERN_SSL))
+print('REQUESTS_HAS_PYOPENSSL: {0}'.format(REQUESTS_HAS_PYOPENSSL))
+
+if not isinstance(urllib3_package, Exception):
+    print('urllib3.util:')
+    print('  HAS_SNI: {0}'.format(urllib3_modules['urllib3.util'].HAS_SNI))
+    print('  IS_PYOPENSSL: {0}'.format(urllib3_modules['urllib3.util'].IS_PYOPENSSL))
+
+if not isinstance(requests, Exception):
+    print('requests.packages.urllib3.util:')
+    print('  HAS_SNI: {0}'.format(requests_urllib3_modules['urllib3.util'].HAS_SNI))
+    print('  IS_PYOPENSSL: {0}'.format(requests_urllib3_modules['urllib3.util'].IS_PYOPENSSL))
