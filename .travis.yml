@@ -12,21 +12,25 @@ python:
   - nightly
 
 install:
+  - pip install --upgrade pip
   - pip install 'requests[security]'
   - pip install urllib3
 
 script:
-  - python show.py
+  # python show.py
 
-  - python -c "import requests; requests.get('https://www.wikipedia.org/')"
-  - python -c "import requests; requests.get('https://self-signed.badssl.com/')" || true
-  - python -c "import requests; requests.get('https://testssl-expire-r2i2.disig.sk/index.en.html')" || true
+  - python -c "from pip._vendor import requests; requests.get('https://www.wikipedia.org/')"
+  - python -c "from pip._vendor import requests; requests.get('https://self-signed.badssl.com/')" || true
+  - python -c "from pip._vendor import requests; requests.get('https://testssl-expire-r2i2.disig.sk/index.en.html')" || true
 
   # Unbundle
   - rm -rf $(python -c "import os.path, requests; print(os.path.dirname(requests.__file__))")/packages/urllib3
+  - pip install -r pip_vendored_list.txt
+  - sed -i 's/DEBUNDLED = False/DEBUNDLED = True/' $(python -c "import os.path, pip; print(os.path.dirname(pip.__file__))")/_vendor/__init__.py
+  - find $(python -c "import os.path, pip; print(os.path.dirname(pip.__file__))")/_vendor -d -not -regex '.*/pip/_vendor/__init__\.py$'         -not -regex '.*/pip/_vendor$' -exec rm -rf {} \;
 
-  - python show.py
+  # python show.py
 
-  - python -c "import requests; requests.get('https://www.wikipedia.org/')"
-  - python -c "import requests; requests.get('https://self-signed.badssl.com/')" || true
-  - python -c "import requests; requests.get('https://testssl-expire-r2i2.disig.sk/index.en.html')" || true
+  - python -c "from pip._vendor import requests; requests.get('https://www.wikipedia.org/')"
+  - python -c "from pip._vendor import requests; requests.get('https://self-signed.badssl.com/')" || true
+  - python -c "from pip._vendor import requests; requests.get('https://testssl-expire-r2i2.disig.sk/index.en.html')" || true
