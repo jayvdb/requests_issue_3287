@@ -12,16 +12,16 @@ matrix:
             - debian-sid
           packages:
             - python-requests
+            # avoid dependency on latest python-cryptography
+            - python-openssl=0.13-2ubuntu6
+            - python-ndg-httpsclient
+            - python-pyasn1
 
 script:
-  - python show.py
+  - pip install --upgrade PyOpenSSL cryptography
 
-  - python -c "import requests; requests.get('https://www.wikipedia.org/')"
-  - python -c "import requests; requests.get('https://self-signed.badssl.com/')" || true
-  - python -c "import requests; requests.get('https://testssl-expire-r2i2.disig.sk/index.en.html')" || true
-
-  # Unbundle
-  - sudo rm -rf $(python -c "import os.path, requests; print(os.path.dirname(requests.__file__))")/packages/urllib3
+  # Show urllib3 is unbundled from requests
+  - ls $(python -c "import os.path, requests; print(os.path.dirname(requests.__file__))")/packages/
 
   - python show.py
 
