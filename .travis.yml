@@ -1,19 +1,17 @@
-language: python
-python:
-  - 2.6
-  - 2.7.6
-  - 2.7.8
-  - 2.7.9
-  - 2.7.10
-  - 2.7.11
-  - 3.3
-  - 3.4
-  - 3.5
-  - nightly
-
-install:
-  - pip install 'requests[security]'
-  - pip install urllib3
+matrix:
+  include:
+    - language: python
+      python: 2.7
+      virtualenv:
+        system_site_packages: true
+      sudo: required
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - debian-sid
+          packages:
+            - python-requests
 
 script:
   - python show.py
@@ -23,7 +21,7 @@ script:
   - python -c "import requests; requests.get('https://testssl-expire-r2i2.disig.sk/index.en.html')" || true
 
   # Unbundle
-  - rm -rf $(python -c "import os.path, requests; print(os.path.dirname(requests.__file__))")/packages/urllib3
+  - sudo rm -rf $(python -c "import os.path, requests; print(os.path.dirname(requests.__file__))")/packages/urllib3
 
   - python show.py
 
